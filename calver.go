@@ -34,7 +34,7 @@ func main() {
 
 func version(prev string, now time.Time) string {
 	if prev == "" {
-		prev, _ = cmd("git", "describe", "--abbrev=0", "--match", "v[0-9].*")
+		prev, _ = cmd("git", "describe", "--abbrev=0", "--tags", "--match", "v[0-9]*")
 	}
 	prev = strings.TrimLeft(prev, "vV")
 
@@ -42,16 +42,16 @@ func version(prev string, now time.Time) string {
 	curMonth := now.Month()
 
 	if prev == "" { // no previous version
-		return fmt.Sprintf("%d.%d.0\n", curYear, curMonth)
+		return fmt.Sprintf("%d.%d.0", curYear, curMonth)
 	}
 
 	latestStable, err := semver.NewVersion(prev)
 	if err != nil { // unparseable version
-		return fmt.Sprintf("%d.%d.0\n", curYear, curMonth)
+		return fmt.Sprintf("%d.%d.0", curYear, curMonth)
 	}
 
 	if latestStable.Major != int64(curYear) || latestStable.Minor != int64(curMonth) { // new month/year
-		return fmt.Sprintf("%d.%d.0\n", curYear, curMonth)
+		return fmt.Sprintf("%d.%d.0", curYear, curMonth)
 	}
 
 	latestStable.Patch++
