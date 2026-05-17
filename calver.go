@@ -34,7 +34,13 @@ func main() {
 
 func version(prev string, now time.Time) string {
 	if prev == "" {
-		prev, _ = cmd("git", "describe", "--abbrev=0", "--tags", "--match", "v[0-9]*")
+		var err error
+		prev, err = cmd("git", "describe", "--abbrev=0", "--tags", "--match", "v[0-9]*")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to run git: %v\n", err)
+			fmt.Fprintf(os.Stderr, "output: %v\n", prev)
+			prev = ""
+		}
 	}
 	prev = strings.TrimLeft(prev, "vV")
 
@@ -61,8 +67,5 @@ func version(prev string, now time.Time) string {
 func cmd(name string, args ...string) (string, error) {
 	cmd := exec.Command(name, args...)
 	bs, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(bs)), nil
+	return strings.TrimSpace(string(bs)), err
 }
