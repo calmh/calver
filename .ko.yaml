@@ -1,0 +1,4 @@
+defaultBaseImage: docker.io/alpine/git:latest
+defaultPlatforms:
+- linux/arm64
+- linux/amd64
