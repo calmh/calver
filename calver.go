@@ -66,6 +66,11 @@ func version(prev string, now time.Time) string {
 
 func cmd(name string, args ...string) (string, error) {
 	cmd := exec.Command(name, args...)
+	cmd.Env = append(cmd.Env,
+		"GIT_CONFIG_COUNT=1",
+		"GIT_CONFIG_KEY_0=safe.directory",
+		"GIT_CONFIG_VALUE_0=*",
+	)
 	bs, err := cmd.CombinedOutput()
 	return strings.TrimSpace(string(bs)), err
 }
